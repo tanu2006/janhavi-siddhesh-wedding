@@ -1,0 +1,106 @@
+
+.photo-gallery-carousel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  perspective: 1000px;
+}
+
+.photo-gallery-carousel .gallery-photo {
+  position: absolute;
+  top: 0;
+  left: 15%;
+  width: 70%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid rgba(232, 189, 101, 0.55);
+
+  transition:
+    transform 0.5s ease,
+    opacity 0.5s ease;
+
+  /* Improve animation rendering */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.gallery-center {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  z-index: 3;
+}
+
+.gallery-left {
+  transform: translateX(-72%) scale(0.78);
+  opacity: 0.65;
+  z-index: 2;
+}
+
+.gallery-right {
+  transform: translateX(72%) scale(0.78);
+  opacity: 0.65;
+  z-index: 2;
+}
+
+.gallery-hidden {
+  transform: translateX(0) scale(0.5);
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(6, 22, 56, 0.8);
+  color: #e8bd65;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.gallery-prev {
+  left: 3%;
+}
+
+.gallery-next {
+  right: 3%;
+}
+
+.gallery-dots {
+  position: absolute;
+  bottom: -2%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 6;
+}
+
+.gallery-dot {
+  width: 8px;
+  height: 8px;
+  border: none;
+  border-radius: 50%;
+  background: #9b7740;
+  padding: 0;
+  cursor: pointer;
+}
+
+.gallery-dot.active {
+  width: 22px;
+  border-radius: 10px;
+  background: #e8bd65;
+}

@@ -38,9 +38,22 @@ function getTimeLeft() {
 
 function App() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft);
-  const [entered, setEntered] = useState(false);
+  const [entered, setEntered] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+  const startMusic = async () => {
+    try {
+      await audioRef.current?.play();
+    } catch { 
+      console.log("Autoplay was blocked. Visitor can tap the music button.");
+    }
+  };
+
+  startMusic();
+}, []);
+
+const [language, setLanguage] = useState("mr");
 
   const audioRef = useRef(null);
   const soundContextRef = useRef(null);
@@ -247,49 +260,86 @@ useEffect(() => {
             className="welcome-cover"
           />
 
-          {/* Language selector */}
-          <div className="language-switcher">
-            <button
-              className={`language-option ${
-                language === "en" ? "active-language" : ""
-              }`}
-              onClick={() => {
-  playButtonSound();
-  setLanguage("en");
-}}
-            >
-              ENGLISH
-            </button>
+{/* Language instruction */}
+<div className="language-heading">
+  {isMarathi ? "तुमची भाषा निवडा" : "CHOOSE YOUR LANGUAGE"}
+</div>
 
-            <span className="language-divider">|</span>
+{/* Language selector */}
+<div className="language-switcher">
+  <button
+    className={`language-option ${
+      language === "en" ? "active-language" : ""
+    }`}
+    onClick={() => {
+      playButtonSound();
+      setLanguage("en");
+    }}
+  >
+    ENGLISH
+  </button>
 
-            <button
-              className={`language-option ${
-                language === "mr" ? "active-language" : ""
-              }`}
-              onClick={() => {
-  playButtonSound();
-  setLanguage("mr");
-}}
-            >
-              मराठी
-            </button>
-          </div>
+  <span className="language-divider">|</span>
 
-          {/* Enter invitation */}
-          <button
-            className="enter-invitation-button"
-            onClick={enterInvitation}
-          >
-            {isMarathi ? "आमंत्रण पहा" : "ENTER INVITATION"}
-          </button>
+  <button
+    className={`language-option ${
+      language === "mr" ? "active-language" : ""
+    }`}
+    onClick={() => {
+      playButtonSound();
+      setLanguage("mr");
+    }}
+  >
+    मराठी
+  </button>
+</div>
 
+{/* Enter invitation */}
+<button
+  className="enter-invitation-button"
+  onClick={enterInvitation}
+>
+  {isMarathi ? "आमंत्रण पहा" : "OPEN INVITATION"}
+</button>
+
+{/* Opening instruction */}
+<div className="opening-hint">
+  {isMarathi
+    ? "आमंत्रण पाहण्यासाठी येथे टॅप करा"
+    : "TAP TO BEGIN"}
+  <span>↓</span>
+</div>
         </div>
       )}
 
-      {entered && (
-        <>
-          <main className="invitation">
+{entered && (
+  <>
+    {/* Floating language switcher */}
+    <div className="invitation-language-switcher">
+      <button
+  className={language === "mr" ? "selected-language" : ""}
+  onClick={() => {
+    playButtonSound();
+    setLanguage("mr");
+  }}
+>
+  मराठी
+</button>
+
+<span>|</span>
+
+<button
+  className={language === "en" ? "selected-language" : ""}
+  onClick={() => {
+    playButtonSound();
+    setLanguage("en");
+  }}
+>
+  EN
+</button>
+    </div>
+
+    <main className="invitation">
             {pages.map((page, index) => (
               <section
                 className={`invitation-page ${
@@ -382,7 +432,8 @@ useEffect(() => {
 
           {/* Music control */}
           <button
-            className="music-control"
+          type="button"
+            className={`music-control ${!isPlaying ? "music-paused" : ""}`}
             onClick={toggleMusic}
             aria-label={isPlaying ? "Pause music" : "Play music"}
           >
@@ -438,6 +489,45 @@ useEffect(() => {
           letter-spacing: 2px;
           cursor: pointer;
         }
+
+       .language-heading {
+  position: absolute;
+  top: calc(20% - 48px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  color: #ffd77d;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  text-shadow: 0 2px 5px #061638;
+}
+
+.opening-hint {
+  position: absolute;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: #ffd77d;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  text-shadow: 0 2px 5px #061638;
+}
+
+.opening-hint span {
+  font-size: 24px;
+  line-height: 1;
+}
 
         .language-switcher {
           position: absolute;
@@ -500,6 +590,22 @@ useEffect(() => {
           width: 21px;
           height: 21px;
         }
+
+        /* Gentle golden pulse when music is paused */
+
+.music-control.music-paused {
+  animation: musicPulse 2s ease-in-out infinite;
+}
+
+@keyframes musicPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(232, 189, 101, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 15px 5px rgba(232, 189, 101, 0.45);
+  }
+}
       `}</style>
     </>
   );
